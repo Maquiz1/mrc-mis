@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2 class="mb-4">Households</h2>
+
+<table class="table table-bordered table-striped">
+  <thead class="table-dark">
+    <tr>
+      <th>#</th>
+      <th>Head Name</th>
+      <th>Men</th>
+      <th>Women</th>
+      <th>Total Members</th>
+      <th>Phone</th>
+      <th>Village / Street</th>
+      <th>VEO</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for household in households %}
+    <tr>
+      <td>{{ forloop.counter }}</td>
+      <td>{{ household.household_head_name }}</td>
+      <td>{{ household.number_of_men }}</td>
+      <td>{{ household.number_of_women }}</td>
+      <td>{{ household.total_members }}</td>
+      <td>{{ household.household_head_phone_number }}</td>
+      <td>{{ household.village_street }}</td>
+      <td>{{ household.veo.username }}</td>
+      <td>
+        <a href="{% url 'household:household-detail' household.id %}" class="btn btn-sm btn-primary">View</a>
+        <a href="{% url 'household:household-edit' household.id %}" class="btn btn-sm btn-warning">Edit</a>
+        <a href="{% url 'household:household-delete' household.id %}" class="btn btn-sm btn-danger">Delete</a>
+      </td>
+    </tr>
+    {% empty %}
+    <tr>
+      <td colspan="9" class="text-center">No households available.</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<a href="{% url 'household:create-household' %}" class="btn btn-success mt-3">Add Household</a>
+{% endblock %}

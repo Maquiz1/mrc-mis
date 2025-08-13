@@ -8,6 +8,8 @@ from .views import (
     SignUpView,
     ActivateAccount,
     ResendActivationEmailView,
+    StaffDetailView,
+    StaffListView,
     VerifyPhoneView,
     SendPhoneVerificationView
 )
@@ -16,6 +18,11 @@ from .forms import CustomPasswordResetForm
 app_name = 'users'
 
 urlpatterns = [
+    # Staff listing
+    path('staff/', StaffListView.as_view(), name='staff_list'),
+    path('staff/<int:pk>/', StaffDetailView.as_view(), name='staff_detail'),  # ✅ detail view
+    
+    
     # Registration and Activation
     path('sign_up/', SignUpView.as_view(), name='sign_up'),
     path('activate/<uidb64>/<token>/', ActivateAccount.as_view(), name='activate_account'),

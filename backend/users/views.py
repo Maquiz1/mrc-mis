@@ -20,6 +20,8 @@ from django.utils.html import format_html
 from django.contrib.auth import authenticate
 import binascii
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import ListView,DetailView
+
 
 from .sms_utils import send_verification_sms
 
@@ -190,3 +192,17 @@ class VerifyPhoneView(LoginRequiredMixin, View):
         else:
             messages.error(request, "Invalid verification code.")
             return redirect('users:verify_phone')
+        
+class StaffListView(ListView):
+    model = User
+    template_name = 'users/staff/staff_list.html'
+    context_object_name = 'staff_list'
+
+    def get_queryset(self):
+        # If you only want users marked as staff
+        return User.objects.filter(is_staff=True).order_by('username')
+    
+class StaffDetailView(DetailView):
+    model = User
+    template_name = 'users/staff/staff_detail.html'
+    context_object_name = 'staff_member'

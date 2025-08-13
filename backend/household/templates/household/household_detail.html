@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2 class="mb-4">Household Details</h2>
+
+<ul class="list-group mb-3">
+    <li class="list-group-item"><strong>Head Name:</strong> {{ household.household_head_name }}</li>
+    <li class="list-group-item"><strong>Number of Men:</strong> {{ household.number_of_men }}</li>
+    <li class="list-group-item"><strong>Number of Women:</strong> {{ household.number_of_women }}</li>
+    <li class="list-group-item"><strong>Total Members:</strong> {{ household.total_members }}</li>
+    <li class="list-group-item"><strong>Phone Number:</strong> {{ household.household_head_phone_number }}</li>
+    <li class="list-group-item"><strong>Village / Street:</strong> {{ household.village_street }}</li>
+    <li class="list-group-item"><strong>VEO:</strong> {{ household.veo.username }}</li>
+</ul>
+
+<a href="{% url 'household:household-list' %}" class="btn btn-secondary">Back to List</a>
+<a href="{% url 'household:household-edit' household.id %}" class="btn btn-warning">Edit</a>
+<a href="{% url 'household:household-delete' household.id %}" class="btn btn-danger">Delete</a>
+{% endblock %}

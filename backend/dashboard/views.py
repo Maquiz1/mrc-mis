@@ -19,4 +19,7 @@ class DashboardHomeView(LoginRequiredMixin, TemplateView):
         context['user'] = self.request.user
 
         return context
+
+class DashboardIndexView(LoginRequiredMixin, TemplateView):
+    template_name = 'dashboard/index-2.html'
     
