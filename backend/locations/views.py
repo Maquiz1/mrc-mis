@@ -1,5 +1,7 @@
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView, DetailView,CreateView, UpdateView, DeleteView
+from django.urls import reverse_lazy
 from .models import Country, Region, District, Site
+from .forms import CountryForm  # Make sure you have a ModelForm for Country
 
 class CountryListView(ListView):
     model = Country
@@ -13,6 +15,23 @@ class CountryDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         context['regions'] = Region.objects.filter(country=self.object)
         return context
+    
+class CountryCreateView(CreateView):
+    model = Country
+    form_class = CountryForm
+    template_name = 'locations/country_form.html'
+    success_url = reverse_lazy('locations:country-list')
+
+class CountryUpdateView(UpdateView):
+    model = Country
+    form_class = CountryForm
+    template_name = 'locations/country_form.html'
+    success_url = reverse_lazy('locations:country-list')
+
+class CountryDeleteView(DeleteView):
+    model = Country
+    template_name = 'locations/country_confirm_delete.html'
+    success_url = reverse_lazy('locations:country-list')
 
 class RegionDetailView(DetailView):
     model = Region

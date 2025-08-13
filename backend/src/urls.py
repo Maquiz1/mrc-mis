@@ -27,6 +27,10 @@ urlpatterns = [
     path('mentorship/', include('mentorship.urls')),  # if mentorship app is included separately
     path('locations/', include('locations.urls', namespace='locations')),
     path("admin/", admin.site.urls),
+    
+    # path('api/', include('household.urls')),
+    # path('api/', include('users.urls')),
+    # path('api/', include('locations.urls')),  # for countries, sites
 ]
 
 if settings.DEBUG:

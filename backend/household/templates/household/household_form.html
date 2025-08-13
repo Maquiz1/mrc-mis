@@ -6,27 +6,72 @@
 {% block content %}
 <div class="container mt-5">
     <div class="row justify-content-center">
-        <div class="col-md-6">
+        <div class="col-md-8">
             <div class="card shadow-sm border-0">
                 <div class="card-body">
                     <h2 class="text-center mb-4">
                         {% if view.object %}Edit Household{% else %}Add Household{% endif %}
                     </h2>
 
-                    <form method="post" novalidate>
+                    <form id="householdForm" method="post" novalidate>
                         {% csrf_token %}
-                        {% for field in form %}
-                            <div class="mb-3">
-                                <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
-                                {{ field }}
-                                {% if field.help_text %}
-                                    <small class="form-text text-muted">{{ field.help_text }}</small>
-                                {% endif %}
-                                {% if field.errors %}
-                                    <div class="text-danger small mt-1">{{ field.errors|striptags }}</div>
-                                {% endif %}
+
+                        <!-- Village / Street -->
+                        <div class="mb-3">
+                            <label for="{{ form.village_street.id_for_label }}" class="form-label">
+                                {{ form.village_street.label }}
+                            </label>
+                            {{ form.village_street }}
+                            {% if form.village_street.errors %}
+                                <div class="text-danger small mt-1">{{ form.village_street.errors|striptags }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Household Head Name -->
+                        <div class="mb-3">
+                            <label for="{{ form.household_head_name.id_for_label }}" class="form-label">
+                                {{ form.household_head_name.label }}
+                            </label>
+                            {{ form.household_head_name }}
+                            {% if form.household_head_name.errors %}
+                                <div class="text-danger small mt-1">{{ form.household_head_name.errors|striptags }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Men, Women, Total Members in one row -->
+                        <div class="row mb-3">
+                            <div class="col">
+                                <label for="{{ form.number_of_men.id_for_label }}" class="form-label">
+                                    {{ form.number_of_men.label }}
+                                </label>
+                                {{ form.number_of_men }}
+                                <div class="text-danger small mt-1" id="menError"></div>
                             </div>
-                        {% endfor %}
+                            <div class="col">
+                                <label for="{{ form.number_of_women.id_for_label }}" class="form-label">
+                                    {{ form.number_of_women.label }}
+                                </label>
+                                {{ form.number_of_women }}
+                                <div class="text-danger small mt-1" id="womenError"></div>
+                            </div>
+                            <div class="col">
+                                <label class="form-label">Total Members</label>
+                                <input type="text" id="total_members" class="form-control" 
+                                       value="{{ form.instance.total_members|default:0 }}" readonly>
+                            </div>
+                        </div>
+
+                        <!-- Phone Number -->
+                        <div class="mb-3">
+                            <label for="{{ form.household_head_phone_number.id_for_label }}" class="form-label">
+                                {{ form.household_head_phone_number.label }}
+                            </label>
+                            {{ form.household_head_phone_number }}
+                            <div class="text-danger small mt-1" id="phoneError"></div>
+                            {% if form.household_head_phone_number.errors %}
+                                <div class="text-danger small mt-1">{{ form.household_head_phone_number.errors|striptags }}</div>
+                            {% endif %}
+                        </div>
 
                         <button type="submit" class="btn btn-primary w-100">
                             {% if view.object %}Update{% else %}Save{% endif %}
@@ -43,4 +88,73 @@
         </div>
     </div>
 </div>
+
+<!-- JavaScript for live total and validations -->
+<script>
+const menInput = document.getElementById("id_number_of_men");
+const womenInput = document.getElementById("id_number_of_women");
+const totalInput = document.getElementById("total_members");
+const menError = document.getElementById("menError");
+const womenError = document.getElementById("womenError");
+const phoneInput = document.getElementById("id_household_head_phone_number");
+const phoneError = document.getElementById("phoneError");
+const form = document.getElementById("householdForm");
+
+function updateTotal() {
+    const men = parseInt(menInput.value) || 0;
+    const women = parseInt(womenInput.value) || 0;
+    totalInput.value = men + women;
+}
+
+function validateNumbers() {
+    let valid = true;
+
+    if (menInput.value === "" || parseInt(menInput.value) < 0) {
+        menError.textContent = "Please enter a non-negative number for men.";
+        menInput.classList.add("is-invalid");
+        valid = false;
+    } else {
+        menError.textContent = "";
+        menInput.classList.remove("is-invalid");
+    }
+
+    if (womenInput.value === "" || parseInt(womenInput.value) < 0) {
+        womenError.textContent = "Please enter a non-negative number for women.";
+        womenInput.classList.add("is-invalid");
+        valid = false;
+    } else {
+        womenError.textContent = "";
+        womenInput.classList.remove("is-invalid");
+    }
+
+    return valid;
+}
+
+function validatePhone() {
+    const phonePattern = /^0\d{9}$/; // starts with 0, followed by 9 digits = 10 digits total
+    if (!phonePattern.test(phoneInput.value.trim())) {
+        phoneError.textContent = "Enter a valid phone number: 10 digits, starting with 0.";
+        phoneInput.classList.add("is-invalid");
+        return false;
+    } else {
+        phoneError.textContent = "";
+        phoneInput.classList.remove("is-invalid");
+        return true;
+    }
+}
+
+// Event listeners
+menInput.addEventListener("input", () => { updateTotal(); validateNumbers(); });
+womenInput.addEventListener("input", () => { updateTotal(); validateNumbers(); });
+phoneInput.addEventListener("input", validatePhone);
+
+form.addEventListener("submit", function(e) {
+    const numbersValid = validateNumbers();
+    const phoneValid = validatePhone();
+    if (!numbersValid || !phoneValid) {
+        e.preventDefault();
+        alert("Please fix errors before submitting the form.");
+    }
+});
+</script>
 {% endblock %}

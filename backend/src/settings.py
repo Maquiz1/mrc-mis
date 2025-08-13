@@ -38,6 +38,7 @@ DATABASES = {
 
 # Installed apps
 INSTALLED_APPS = [
+    'rest_framework',
     "household.apps.HouseholdConfig",
     "documents.apps.DocumentsConfig",
     "reports.apps.ReportsConfig",

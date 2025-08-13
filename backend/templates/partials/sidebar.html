@@ -1,22 +1,68 @@
 {% load static %}
 
+<style>
+.sidebar a {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    text-decoration: none;
+    color: #fff;
+    transition: background 0.3s, color 0.3s;
+}
+
+.sidebar a:hover {
+    background-color: #495057; /* darker gray on hover */
+    color: #fff;
+}
+
+.sidebar a.active {
+    background-color: #007bff; /* Bootstrap primary */
+    color: #fff;
+}
+
+.sidebar i {
+    margin-right: 8px;
+}
+</style>
+
 <div class="sidebar" id="sidebar">
     <h2>📘 MRC-MIS</h2>
 
-    <a href="{% url 'dashboard:dashboard' %}"><i class="fas fa-home"></i><span> Dashboard</span></a>
-    <a href="{% url 'users:staff_list' %}"><i class="fas fa-globe-africa"></i><span> Staffs</span></a>
-    <a href="{% url 'locations:country-list' %}"><i class="fas fa-globe-africa"></i><span> Countries</span></a>
-    <a href="{% url 'clinical:disease-list' %}"><i class="fas fa-virus"></i><span> Diseases</span></a>
-    <a href="{% url 'mentorship:visit-list' %}"><i class="fas fa-calendar-alt"></i><span> Visits</span></a>
-    <a href="{% url 'reports:index' %}"><i class="fas fa-chart-line"></i><span> Reports</span></a>
-    <a href="{% url 'household:household-list' %}"><i class="fas fa-calendar-alt"></i><span> Household</span></a>
-
-    <!-- Link to view all uploaded user manuals -->
-    <a href="{% url 'documents:usermanual-list' %}"><i class="fas fa-book"></i><span> User Manuals</span></a>
+    <a href="{% url 'dashboard:dashboard' %}" class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+        <i class="fas fa-tachometer-alt"></i><span> Dashboard</span>
+    </a>
+    <a href="{% url 'users:staff_list' %}" class="{% if request.resolver_match.url_name == 'staff_list' %}active{% endif %}">
+        <i class="fas fa-users"></i><span> Staffs</span>
+    </a>
+    <a href="{% url 'locations:country-list' %}" class="{% if request.resolver_match.url_name == 'country-list' %}active{% endif %}">
+        <i class="fas fa-globe"></i><span> Countries</span>
+    </a>
+    <a href="{% url 'clinical:disease-list' %}" class="{% if request.resolver_match.url_name == 'disease-list' %}active{% endif %}">
+        <i class="fas fa-virus"></i><span> Diseases</span>
+    </a>
+    <a href="{% url 'mentorship:visit-list' %}" class="{% if request.resolver_match.url_name == 'visit-list' %}active{% endif %}">
+        <i class="fas fa-calendar-check"></i><span> Visits</span>
+    </a>
+    <a href="{% url 'reports:index' %}" class="{% if request.resolver_match.url_name == 'index' %}active{% endif %}">
+        <i class="fas fa-chart-line"></i><span> Reports</span>
+    </a>
+    <a href="{% url 'household:household-list' %}" class="{% if request.resolver_match.url_name == 'household-list' %}active{% endif %}">
+        <i class="fas fa-home"></i><span> Household</span>
+    </a>
+    <a href="{% url 'household:household-upload' %}" class="{% if request.resolver_match.url_name == 'household-upload' %}active{% endif %}">
+        <i class="fas fa-upload"></i><span> Upload Data</span>
+    </a>
+    <a href="{% url 'documents:usermanual-list' %}" class="{% if request.resolver_match.url_name == 'usermanual-list' %}active{% endif %}">
+        <i class="fas fa-book"></i><span> User Manuals</span>
+    </a>
 
     {% if user.is_authenticated %}
-        <a href="{% url 'users:logout' %}"><i class="fas fa-sign-out-alt"></i><span> Logout</span></a>
+        <a href="{% url 'users:logout' %}">
+            <i class="fas fa-sign-out-alt"></i><span> Logout</span>
+        </a>
     {% else %}
-        <a href="{% url 'users:login' %}"><i class="fas fa-sign-in-alt"></i><span> Login</span></a>
+        <a href="{% url 'users:login' %}">
+            <i class="fas fa-sign-in-alt"></i><span> Login</span>
+        </a>
     {% endif %}
 </div>

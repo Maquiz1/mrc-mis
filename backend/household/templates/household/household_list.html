@@ -1,7 +1,10 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2 class="mb-4">Households</h2>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Households</h2>
+    <a href="{% url 'household:create-household' %}" class="btn btn-success">Add Household</a>
+</div>
 
 <table class="table table-bordered table-striped">
   <thead class="table-dark">
@@ -41,6 +44,4 @@
     {% endfor %}
   </tbody>
 </table>
-
-<a href="{% url 'household:create-household' %}" class="btn btn-success mt-3">Add Household</a>
 {% endblock %}
