@@ -20,6 +20,8 @@
 
                     <form method="post" enctype="multipart/form-data">
                         {% csrf_token %}
+
+                        <!-- VEO Selection -->
                         <div class="mb-3">
                             <label for="veo" class="form-label">Select VEO</label>
                             <select name="veo" id="veo" class="form-select" required>
@@ -30,9 +32,18 @@
                             </select>
                         </div>
 
+                        <!-- CSV File -->
                         <div class="mb-3">
                             <label for="file" class="form-label">Select CSV File</label>
                             <input type="file" name="file" id="file" class="form-control" required>
+                        </div>
+
+                        <!-- Optional instructions for CSV -->
+                        <div class="mb-3">
+                            <small class="text-muted">
+                                CSV columns should include:
+                                <strong>household_head_name, number_of_men, number_of_women, household_head_phone_number, region, district, ward, village_street, hamlet</strong>
+                            </small>
                         </div>
 
                         <button type="submit" class="btn btn-primary w-100">Upload</button>

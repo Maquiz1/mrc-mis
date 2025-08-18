@@ -1,0 +1,40 @@
+<!-- expectations/expectation_list.html -->
+{% extends 'base.html' %}
+{% block content %}
+<h2>Hamlet Household Expectations</h2>
+
+<!-- Add button to create a new expectation -->
+<a href="{% url 'household:expectation-add' %}" class="btn btn-primary mb-3">Add New Expectation</a>
+
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>Hamlet</th>
+            <th>Expected Households</th>
+            <th>Created At</th>
+            <th>Updated At</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in expectations %}
+        <tr>
+            <td>{{ item.hamlet.name }}</td>
+            <td>{{ item.expected_households }}</td>
+            <td>{{ item.created_at|date:"Y-m-d H:i" }}</td>
+            <td>{{ item.updated_at|date:"Y-m-d H:i" }}</td>
+            <td>
+                <a href="{% url 'household:expectation-edit' item.pk %}" class="btn btn-sm btn-warning">Edit</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="5">No expectations found.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<a href="{% url 'household:expectation-upload' %}" class="btn btn-primary mt-3">Upload New</a>
+<a href="{% url 'household:expectation-download' %}" class="btn btn-success mt-3">Download Template</a>
+{% endblock %}

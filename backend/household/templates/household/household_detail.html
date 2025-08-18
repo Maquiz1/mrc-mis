@@ -8,8 +8,13 @@
     <li class="list-group-item"><strong>Number of Men:</strong> {{ household.number_of_men }}</li>
     <li class="list-group-item"><strong>Number of Women:</strong> {{ household.number_of_women }}</li>
     <li class="list-group-item"><strong>Total Members:</strong> {{ household.total_members }}</li>
+    <li class="list-group-item"><strong>Nets Needed:</strong> {{ household.number_net_needed }}</li>
     <li class="list-group-item"><strong>Phone Number:</strong> {{ household.household_head_phone_number }}</li>
-    <li class="list-group-item"><strong>Village / Street:</strong> {{ household.village_street }}</li>
+    <li class="list-group-item"><strong>Region:</strong> {{ household.region.name }}</li>
+    <li class="list-group-item"><strong>District:</strong> {{ household.district.name }}</li>
+    <li class="list-group-item"><strong>Ward:</strong> {{ household.ward.name }}</li>
+    <li class="list-group-item"><strong>Village / Street:</strong> {{ household.village_street.name }}</li>
+    <li class="list-group-item"><strong>Hamlet:</strong> {{ household.hamlet.name }}</li>
     <li class="list-group-item"><strong>VEO:</strong> {{ household.veo.username }}</li>
 </ul>
 

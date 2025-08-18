@@ -38,7 +38,7 @@
                             {% endif %}
                         </div>
 
-                        <!-- Men, Women, Total Members in one row -->
+                        <!-- Men, Women, Total Members, Nets Needed -->
                         <div class="row mb-3">
                             <div class="col">
                                 <label for="{{ form.number_of_men.id_for_label }}" class="form-label">
@@ -58,6 +58,11 @@
                                 <label class="form-label">Total Members</label>
                                 <input type="text" id="total_members" class="form-control" 
                                        value="{{ form.instance.total_members|default:0 }}" readonly>
+                            </div>
+                            <div class="col">
+                                <label class="form-label">Nets Needed</label>
+                                <input type="text" id="nets_needed" class="form-control" 
+                                       value="{{ form.instance.number_net_needed|default:0 }}" readonly>
                             </div>
                         </div>
 
@@ -89,21 +94,24 @@
     </div>
 </div>
 
-<!-- JavaScript for live total and validations -->
+<!-- JavaScript for live total, nets needed, and validations -->
 <script>
 const menInput = document.getElementById("id_number_of_men");
 const womenInput = document.getElementById("id_number_of_women");
 const totalInput = document.getElementById("total_members");
+const netsNeededInput = document.getElementById("nets_needed");
 const menError = document.getElementById("menError");
 const womenError = document.getElementById("womenError");
 const phoneInput = document.getElementById("id_household_head_phone_number");
 const phoneError = document.getElementById("phoneError");
 const form = document.getElementById("householdForm");
 
-function updateTotal() {
+function updateTotals() {
     const men = parseInt(menInput.value) || 0;
     const women = parseInt(womenInput.value) || 0;
-    totalInput.value = men + women;
+    const total = men + women;
+    totalInput.value = total;
+    netsNeededInput.value = Math.ceil(total / 2); // same logic as model
 }
 
 function validateNumbers() {
@@ -131,7 +139,7 @@ function validateNumbers() {
 }
 
 function validatePhone() {
-    const phonePattern = /^0\d{9}$/; // starts with 0, followed by 9 digits = 10 digits total
+    const phonePattern = /^0\d{9}$/; // starts with 0, followed by 9 digits
     if (!phonePattern.test(phoneInput.value.trim())) {
         phoneError.textContent = "Enter a valid phone number: 10 digits, starting with 0.";
         phoneInput.classList.add("is-invalid");
@@ -144,9 +152,12 @@ function validatePhone() {
 }
 
 // Event listeners
-menInput.addEventListener("input", () => { updateTotal(); validateNumbers(); });
-womenInput.addEventListener("input", () => { updateTotal(); validateNumbers(); });
+menInput.addEventListener("input", () => { updateTotals(); validateNumbers(); });
+womenInput.addEventListener("input", () => { updateTotals(); validateNumbers(); });
 phoneInput.addEventListener("input", validatePhone);
+
+// Initial load
+updateTotals();
 
 form.addEventListener("submit", function(e) {
     const numbersValid = validateNumbers();

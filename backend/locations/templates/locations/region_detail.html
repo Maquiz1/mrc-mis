@@ -1,7 +1,19 @@
 {% extends 'base.html' %}
 {% block content %}
 <h2>Region: {{ object.name }}</h2>
-<p>Country: <a href="{% url 'locations:country-detail' object.country.id %}">{{ object.country.name }}</a></p>
+
+<p>
+Country: 
+{% if object.country %}
+    <a href="{% url 'locations:country-detail' object.country.id %}">{{ object.country.name }}</a>
+{% else %}
+    N/A
+{% endif %}
+</p>
+
+<div class="mb-3">
+    <a href="{% url 'locations:district-create' %}?region={{ object.id }}" class="btn btn-success">Add District</a>
+</div>
 
 <h3>Districts</h3>
 <table class="table table-bordered table-striped">
@@ -17,12 +29,11 @@
     {% for district in districts %}
     <tr>
       <td>{{ forloop.counter }}</td>
-      <td>{{ district.name }}</td>
+      <td><a href="{% url 'locations:district-detail' district.id %}">{{ district.name }}</a></td>
       <td>{{ district.site_count }}</td>
       <td>
-        <a href="{% url 'locations:district-detail' district.id %}" class="btn btn-sm btn-primary">
-          View Details
-        </a>
+        <a href="{% url 'locations:district-detail' district.id %}" class="btn btn-sm btn-primary">View</a>
+        <a href="{% url 'locations:district-edit' district.id %}" class="btn btn-sm btn-warning">Edit</a>
       </td>
     </tr>
     {% empty %}
@@ -33,5 +44,5 @@
   </tbody>
 </table>
 
-<a href="{% url 'locations:country-detail' object.country.id %}" class="btn btn-secondary mt-3">← Back to {{ object.country.name }}</a>
+<a href="{% url 'locations:country-detail' object.country.id %}" class="btn btn-secondary mt-3">← Back to Country</a>
 {% endblock %}

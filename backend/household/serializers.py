@@ -1,8 +1,10 @@
-# serializers.py
 from rest_framework import serializers
-from .models import Household
+from .models import HamletHouseholdExpectation
+from locations.models import Hamlet
 
-class HouseholdSerializer(serializers.ModelSerializer):
+class HamletHouseholdExpectationSerializer(serializers.ModelSerializer):
+    hamlet_name = serializers.CharField(source='hamlet.name', read_only=True)
+    
     class Meta:
-        model = Household
-        fields = '__all__'
+        model = HamletHouseholdExpectation
+        fields = ['id', 'hamlet', 'hamlet_name', 'expected_households', 'reached_households']

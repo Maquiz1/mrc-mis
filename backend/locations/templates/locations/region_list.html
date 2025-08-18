@@ -1,12 +1,45 @@
 {% extends 'base.html' %}
 
+{% block title %}Regions{% endblock %}
+
 {% block content %}
-<h2>Countries</h2>
-<ul>
-    {% for country in countries %}
-        <li><a href="{% url 'locations:region-detail' region.id %}">{{ region.name }}</a></li>
-    {% empty %}
-        <li>No countries available.</li>
-    {% endfor %}
-</ul>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Regions</h2>
+    <a href="{% url 'locations:region-create' %}" class="btn btn-success">Add Region</a>
+</div>
+
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>#</th>
+            <th>Region Name</th>
+            <th>Country</th>
+            <th>Districts Count</th>
+            <th>Sites Count</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for region in object_list %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ region.name }}</td>
+            <td>{{ region.country.name }}</td>
+            <td>{{ region.district_count }}</td>
+            <td>{{ region.site_count }}</td>
+            <td>
+                <a href="{% url 'locations:region-detail' region.id %}" class="btn btn-sm btn-primary">View</a>
+                <a href="{% url 'locations:region-edit' region.id %}" class="btn btn-sm btn-warning">Edit</a>
+                <a href="{% url 'locations:region-delete' region.id %}" class="btn btn-sm btn-danger">Delete</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="6" class="text-center">No regions available.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<a href="{% url 'locations:country-list' %}" class="btn btn-secondary mt-3">← Back to Countries</a>
 {% endblock %}

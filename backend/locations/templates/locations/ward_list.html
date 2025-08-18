@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}Wards{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Wards</h2>
+    <a href="{% url 'locations:ward-create' %}" class="btn btn-success">Add Ward</a>
+</div>
+
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>#</th>
+            <th>Ward Name</th>
+            <th>District</th>
+            <th>Villages Count</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for ward in object_list %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ ward.name }}</td>
+            <td>{{ ward.district.name }}</td>
+            <td>{{ ward.village_count }}</td>
+            <td>
+                <a href="{% url 'locations:ward-detail' ward.id %}" class="btn btn-sm btn-primary">View</a>
+                <a href="{% url 'locations:ward-edit' ward.id %}" class="btn btn-sm btn-warning">Edit</a>
+                <a href="{% url 'locations:ward-delete' ward.id %}" class="btn btn-sm btn-danger">Delete</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="5" class="text-center">No wards available.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<a href="{% url 'locations:district-list' %}" class="btn btn-secondary mt-3">← Back to Districts</a>
+{% endblock %}

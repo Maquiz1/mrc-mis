@@ -28,6 +28,7 @@ urlpatterns = [
     path('locations/', include('locations.urls', namespace='locations')),
     path("admin/", admin.site.urls),
     
+    path('api/household/', include('household.api.urls')),  # API endpoints
     # path('api/', include('household.urls')),
     # path('api/', include('users.urls')),
     # path('api/', include('locations.urls')),  # for countries, sites

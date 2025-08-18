@@ -1,0 +1,13 @@
+<!-- expectations/expectation_upload.html -->
+{% extends 'base.html' %}
+{% block content %}
+<h2>Upload Hamlet Household Expectations</h2>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Upload</button>
+</form>
+<a href="{% url 'household:expectation-download' %}" class="btn btn-success mt-3">
+    Download Template
+</a>
+{% endblock %}

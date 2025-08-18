@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Delete Hamlet Expectation</h2>
+<p>Are you sure you want to delete expectation for <strong>{{ object.hamlet.name }}</strong>?</p>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Yes, Delete</button>
+    <a href="{% url 'household:expectation-list' %}" class="btn btn-secondary">Cancel</a>
+</form>
+{% endblock %}

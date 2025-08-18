@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Hamlet: {{ object.name }}</h2>
+
+<p>
+Village / Street: 
+{% if object.village %}
+    <a href="{% url 'locations:villagestreet-detail' object.village.id %}">{{ object.village.name }}</a>
+{% endif %}
+</p>
+
+<p>
+Ward: 
+{% if object.village and object.village.ward %}
+    <a href="{% url 'locations:ward-detail' object.village.ward.id %}">{{ object.village.ward.name }}</a>
+{% endif %}
+</p>
+
+<p>
+District: 
+{% if object.village and object.village.ward and object.village.ward.district %}
+    <a href="{% url 'locations:district-detail' object.village.ward.district.id %}">{{ object.village.ward.district.name }}</a>
+{% endif %}
+</p>
+
+<p>
+Region: 
+{% if object.village and object.village.ward and object.village.ward.district and object.village.ward.district.region %}
+    <a href="{% url 'locations:region-detail' object.village.ward.district.region.id %}">{{ object.village.ward.district.region.name }}</a>
+{% endif %}
+</p>
+
+<p>
+Country: 
+{% if object.village and object.village.ward and object.village.ward.district and object.village.ward.district.region and object.village.ward.district.region.country %}
+    <a href="{% url 'locations:country-detail' object.village.ward.district.region.country.id %}">{{ object.village.ward.district.region.country.name }}</a>
+{% endif %}
+</p>
+
+<a href="{% url 'locations:villagestreet-detail' object.village.id %}" class="btn btn-secondary mt-3">← Back to Village / Street</a>
+{% endblock %}

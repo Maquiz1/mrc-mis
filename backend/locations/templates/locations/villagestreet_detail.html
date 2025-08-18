@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Village / Street: {{ object.name }}</h2>
+
+<p>
+Ward: 
+{% if object.ward %}
+    <a href="{% url 'locations:ward-detail' object.ward.id %}">{{ object.ward.name }}</a>
+{% endif %}
+</p>
+
+<p>
+District: 
+{% if object.ward and object.ward.district %}
+    <a href="{% url 'locations:district-detail' object.ward.district.id %}">{{ object.ward.district.name }}</a>
+{% endif %}
+</p>
+
+<p>
+Region: 
+{% if object.ward and object.ward.district and object.ward.district.region %}
+    <a href="{% url 'locations:region-detail' object.ward.district.region.id %}">{{ object.ward.district.region.name }}</a>
+{% endif %}
+</p>
+
+<p>
+Country: 
+{% if object.ward and object.ward.district and object.ward.district.region and object.ward.district.region.country %}
+    <a href="{% url 'locations:country-detail' object.ward.district.region.country.id %}">{{ object.ward.district.region.country.name }}</a>
+{% endif %}
+</p>
+
+<div class="mb-3">
+    <a href="{% url 'locations:hamlet-create' %}?village={{ object.id }}" class="btn btn-success">Add Hamlet</a>
+</div>
+
+<h3>Hamlets</h3>
+<table class="table table-bordered table-striped">
+  <thead class="table-dark">
+    <tr>
+      <th>#</th>
+      <th>Name</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for hamlet in hamlets %}
+    <tr>
+      <td>{{ forloop.counter }}</td>
+      <td><a href="{% url 'locations:hamlet-detail' hamlet.id %}">{{ hamlet.name }}</a></td>
+      <td>
+        <a href="{% url 'locations:hamlet-detail' hamlet.id %}" class="btn btn-sm btn-primary">View</a>
+        <a href="{% url 'locations:hamlet-edit' hamlet.id %}" class="btn btn-sm btn-warning">Edit</a>
+      </td>
+    </tr>
+    {% empty %}
+    <tr>
+      <td colspan="3" class="text-center">No hamlets found.</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<a href="{% url 'locations:ward-detail' object.ward.id %}" class="btn btn-secondary mt-3">← Back to Ward</a>
+{% endblock %}

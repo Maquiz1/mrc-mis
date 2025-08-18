@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Hamlet: {{ expectation.hamlet.name }}</h2>
+<p>Expected Households: {{ expectation.expected_households }}</p>
+<p>Created at: {{ expectation.created_at }}</p>
+<p>Updated at: {{ expectation.updated_at }}</p>
+
+<a href="{% url 'household:expectation-edit' expectation.id %}" class="btn btn-warning">Edit</a>
+<a href="{% url 'household:expectation-delete' expectation.id %}" class="btn btn-danger">Delete</a>
+<a href="{% url 'household:expectation-list' %}" class="btn btn-secondary">Back to List</a>
+{% endblock %}

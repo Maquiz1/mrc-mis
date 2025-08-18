@@ -7,7 +7,7 @@ Dashboard — {{ user.get_full_name|default:user.username }}
 {% block content %}
 <h2 class="mb-4">Welcome, {{ user.get_full_name|default:user.username }}!</h2>
 
-<div class="row g-3 mb-4">
+<!-- <div class="row g-3 mb-4">
     <div class="col-md-4">
         <div class="card text-white bg-primary h-100">
             <div class="card-body">
@@ -40,6 +40,33 @@ Dashboard — {{ user.get_full_name|default:user.username }}
             </div>
             <div class="card-footer bg-transparent border-0">
                 <a href="{% url 'mentorship:visit-list' %}" class="text-white text-decoration-underline">View visits</a>
+            </div>
+        </div>
+    </div>
+</div> -->
+
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card text-white bg-info h-100">
+            <div class="card-body">
+                <h5 class="card-title"><i class="fas fa-clipboard-check me-2"></i>Expected</h5>
+                <p class="card-text fs-4">{{ expected_count }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-white bg-success h-100">
+            <div class="card-body">
+                <h5 class="card-title"><i class="fas fa-check-circle me-2"></i>Reached</h5>
+                <p class="card-text fs-4">{{ available_count }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-white bg-danger h-100">
+            <div class="card-body">
+                <h5 class="card-title"><i class="fas fa-minus-circle me-2"></i>Nets Needed</h5>
+                <p class="card-text fs-4">{{ nets_count }}</p>
             </div>
         </div>
     </div>

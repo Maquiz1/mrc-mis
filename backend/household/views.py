@@ -1,21 +1,92 @@
-from django.views.generic import CreateView, ListView, DetailView, UpdateView, DeleteView
+import csv
+import math
+import tempfile
+import json
+from io import TextIOWrapper
+from django.views.generic import CreateView, ListView, DetailView, UpdateView, DeleteView, View, FormView
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
-from urllib3 import request
-from .models import Household
-from .forms import HouseholdForm
-from rest_framework import viewsets
-from .serializers import HouseholdSerializer
-import csv
-from django.views import View
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.models import User
-from .forms import HouseholdUploadForm
-from io import TextIOWrapper
 from django.http import HttpResponse
+from rest_framework import viewsets
+
+from .models import Household,HamletHouseholdExpectation
+from .forms import HouseholdForm,HamletHouseholdExpectationForm,HamletHouseholdExpectationUploadForm
+from .serializers import HouseholdSerializer
+from locations.models import Region, District, Ward, VillageStreet, Hamlet
 
 
+# List all expectations
+class HamletExpectationListView(ListView):
+    model = HamletHouseholdExpectation
+    template_name = 'expectations/expectation_list.html'
+    context_object_name = 'expectations'
+
+# Detail of one expectation
+class HamletExpectationDetailView(DetailView):
+    model = HamletHouseholdExpectation
+    template_name = 'expectations/expectation_detail.html'
+    context_object_name = 'expectation'
+
+# Create new expectation
+class HamletExpectationCreateView(CreateView):
+    model = HamletHouseholdExpectation
+    form_class = HamletHouseholdExpectationForm
+    template_name = 'expectations/expectation_form.html'
+
+    def get_success_url(self):
+        # Redirect to hamlet detail page
+        return reverse_lazy('household:expectation-list')
+
+# Update expectation
+class HamletExpectationUpdateView(UpdateView):
+    model = HamletHouseholdExpectation
+    form_class = HamletHouseholdExpectationForm
+    template_name = 'expectations/expectation_form.html'
+
+    def get_success_url(self):
+        return reverse_lazy('household:expectation-list')
+
+# Delete expectation
+class HamletExpectationDeleteView(DeleteView):
+    model = HamletHouseholdExpectation
+    template_name = 'expectations/expectation_confirm_delete.html'
+    success_url = reverse_lazy('household:expectation-list')
+
+class HamletHouseholdExpectationListView(ListView):
+    model = HamletHouseholdExpectation
+    template_name = 'expectations/expectation_list.html'
+    context_object_name = 'expectations'
+
+class HamletHouseholdExpectationUploadView(FormView):
+    template_name = 'expectations/expectation_upload.html'
+    form_class = HamletHouseholdExpectationUploadForm
+
+    def form_valid(self, form):
+        form.save()
+        return redirect('household:expectation-list')
+
+class HamletHouseholdExpectationDownloadView(View):
+    def get(self, request, *args, **kwargs):
+        # Create the HTTP response with CSV content
+        response = HttpResponse(
+            content_type='text/csv',
+            headers={'Content-Disposition': 'attachment; filename="hamlet_household_expectations_template.csv"'},
+        )
+
+        writer = csv.writer(response)
+        # Write header row
+        writer.writerow(['hamlet', 'expected_households'])
+
+        # Optional: If you want to include existing expectations from DB
+        # from .models import HamletHouseholdExpectation
+        # for item in HamletHouseholdExpectation.objects.all():
+        #     writer.writerow([item.hamlet.name, item.expected_households])
+
+        return response
+    
 class HouseholdListView(LoginRequiredMixin, ListView):
     model = Household
     template_name = 'household/household_list.html'
@@ -52,23 +123,12 @@ class HouseholdDeleteView(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy('household:household-list')
 
 
-
 class HouseholdViewSet(viewsets.ModelViewSet):
     queryset = Household.objects.all()
     serializer_class = HouseholdSerializer
-    
-    
-    
-import csv
-from django.contrib import messages
-from django.views import View
-from django.shortcuts import render, redirect
-from django.contrib.auth.models import User
-from django.http import HttpResponse
-from .models import Household
 
 
-class HouseholdUploadView(View):
+class HouseholdUploadView(LoginRequiredMixin, ListView):
     template_name = "household/upload.html"
 
     def get(self, request, *args, **kwargs):
@@ -95,41 +155,73 @@ class HouseholdUploadView(View):
         reader = csv.DictReader(csv_file)
 
         for idx, row in enumerate(reader, start=1):
-            # Skip completely empty rows
             if not any(row.values()):
                 continue
 
-            # Validation
             row_invalid = False
             try:
+                head = row.get("household_head_name", "").strip()
                 men = int(row.get("number_of_men") or 0)
                 women = int(row.get("number_of_women") or 0)
                 phone = row.get("household_head_phone_number", "").strip()
-                village = row.get("village_street", "").strip()
-                head = row.get("household_head_name", "").strip()
 
-                if not village or not head or not phone:
+                region_name = row.get("region", "").strip()
+                district_name = row.get("district", "").strip()
+                ward_name = row.get("ward", "").strip()
+                village_name = row.get("village", "").strip()
+                hamlet_name = row.get("hamlet", "").strip()
+
+                # Validate required fields
+                if not all([head, phone, region_name, district_name, ward_name, village_name, hamlet_name]):
                     row_invalid = True
-                    row['error'] = "Missing required fields."
+                    row["error"] = "Missing required fields."
                 elif not phone.startswith("0") or len(phone) != 10:
                     row_invalid = True
-                    row['error'] = "Phone must be 10 digits starting with 0."
+                    row["error"] = "Phone must be 10 digits starting with 0."
+
+                # Lookup location objects
+                if not row_invalid:
+                    try:
+                        region = Region.objects.get(name__iexact=region_name)
+                        district = District.objects.get(name__iexact=district_name, region=region)
+                        ward = Ward.objects.get(name__iexact=ward_name, district=district)
+                        village = VillageStreet.objects.get(name__iexact=village_name, ward=ward)
+                        hamlet = Hamlet.objects.get(name__iexact=hamlet_name, village=village)
+                    except Region.DoesNotExist:
+                        row_invalid = True
+                        row["error"] = f"Region '{region_name}' not found."
+                    except District.DoesNotExist:
+                        row_invalid = True
+                        row["error"] = f"District '{district_name}' not found in region '{region_name}'."
+                    except Ward.DoesNotExist:
+                        row_invalid = True
+                        row["error"] = f"Ward '{ward_name}' not found in district '{district_name}'."
+                    except VillageStreet.DoesNotExist:
+                        row_invalid = True
+                        row["error"] = f"Village '{village_name}' not found in ward '{ward_name}'."
+                    except Hamlet.DoesNotExist:
+                        row_invalid = True
+                        row["error"] = f"Hamlet '{hamlet_name}' not found in village '{village_name}'."
+
+                if row_invalid:
+                    invalid_rows.append(row)
+                else:
+                    Household.objects.create(
+                        household_head_name=head,
+                        number_of_men=men,
+                        number_of_women=women,
+                        household_head_phone_number=phone,
+                        region=region,
+                        district=district,
+                        ward=ward,
+                        village=village,
+                        hamlet=hamlet,
+                        veo=veo_user
+                    )
 
             except Exception as e:
-                row_invalid = True
-                row['error'] = str(e)
-
-            if row_invalid:
+                row["error"] = str(e)
                 invalid_rows.append(row)
-            else:
-                Household.objects.create(
-                    household_head_name=head,
-                    number_of_men=men,
-                    number_of_women=women,
-                    household_head_phone_number=phone,
-                    village_street=village,
-                    veo=veo_user
-                )
 
         if invalid_rows:
             messages.warning(request, f"{len(invalid_rows)} rows were invalid and not uploaded.")
@@ -154,12 +246,16 @@ class HouseholdTemplateDownloadView(View):
             "number_of_men",
             "number_of_women",
             "household_head_phone_number",
-            "village_street",
+            "region",
+            "district",
+            "ward",
+            "village",
+            "hamlet",
             "veo_username"
         ])
 
         # Example row
-        writer.writerow(["John Doe", "2", "3", "0712345678", "Kijiji A", "veo1"])
+        writer.writerow(["John Doe", "2", "3", "0712345678", "Dodoma", "Dodoma Urban", "Kizota", "Kijiji A", "Kitongoji B", "veo1"])
 
         # Empty row then available usernames
         writer.writerow([])
@@ -168,12 +264,10 @@ class HouseholdTemplateDownloadView(View):
             writer.writerow([user.username])
 
         return response
-    
-    
-# Download invalid rows as CSV
+
+
 class DownloadInvalidRowsView(View):
     def post(self, request, *args, **kwargs):
-        import json
         invalid_rows_json = request.POST.get("invalid_rows")
         fieldnames = request.POST.get("fieldnames")
         if not invalid_rows_json or not fieldnames:
