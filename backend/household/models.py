@@ -11,6 +11,7 @@ class HamletHouseholdExpectation(models.Model):
         related_name='household_expectations'
     )
     expected_households = models.PositiveIntegerField(default=0)
+    availabled_households = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

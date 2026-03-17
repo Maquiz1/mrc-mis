@@ -74,8 +74,8 @@ class VillageStreetForm(forms.ModelForm):  # Renamed
 class HamletForm(forms.ModelForm):
     class Meta:
         model = Hamlet
-        fields = ['name', 'village']
+        fields = ['name', 'village_street']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
-            'village': forms.Select(attrs={'class': 'form-select'}),
+            'village_street': forms.Select(attrs={'class': 'form-select'}),
         }

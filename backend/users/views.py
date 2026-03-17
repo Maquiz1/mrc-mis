@@ -192,7 +192,7 @@ class VerifyPhoneView(LoginRequiredMixin, View):
         else:
             messages.error(request, "Invalid verification code.")
             return redirect('users:verify_phone')
-        
+  
 class StaffListView(ListView):
     model = User
     template_name = 'users/staff/staff_list.html'

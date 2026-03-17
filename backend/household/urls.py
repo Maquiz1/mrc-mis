@@ -1,6 +1,12 @@
 from django.urls import path
-from . import views
-from .views import (
+from household.views import (
+    HamletExpectationListView,
+    HamletExpectationDetailView,
+    HamletExpectationCreateView,
+    HamletExpectationUpdateView,
+    HamletExpectationDeleteView,
+    HamletHouseholdExpectationUploadView,
+    HamletHouseholdExpectationDownloadView,
     HouseholdCreateView,
     HouseholdListView,
     HouseholdDetailView,
@@ -14,13 +20,13 @@ from .views import (
 app_name = 'household'
 
 urlpatterns = [
-    path('', views.HamletExpectationListView.as_view(), name='expectation-list'),
-    path('<int:pk>/', views.HamletExpectationDetailView.as_view(), name='expectation-detail'),
-    path('add/', views.HamletExpectationCreateView.as_view(), name='expectation-add'),
-    path('<int:pk>/edit/', views.HamletExpectationUpdateView.as_view(), name='expectation-edit'),
-    path('<int:pk>/delete/', views.HamletExpectationDeleteView.as_view(), name='expectation-delete'),
-    path('upload/', views.HamletHouseholdExpectationUploadView.as_view(), name='expectation-upload'),
-    path('download/', views.HamletHouseholdExpectationDownloadView.as_view(), name='expectation-download'),  # Download Excel/CSV template
+    path('', HamletExpectationListView.as_view(), name='expectation-list'),
+    path('<int:pk>/', HamletExpectationDetailView.as_view(), name='expectation-detail'),
+    path('add/', HamletExpectationCreateView.as_view(), name='expectation-add'),
+    path('<int:pk>/edit/', HamletExpectationUpdateView.as_view(), name='expectation-edit'),
+    path('<int:pk>/delete/', HamletExpectationDeleteView.as_view(), name='expectation-delete'),
+    path('upload/', HamletHouseholdExpectationUploadView.as_view(), name='expectation-upload'),
+    path('download/', HamletHouseholdExpectationDownloadView.as_view(), name='expectation-download'),  # Download Excel/CSV template
 
     path('household/create-household/', HouseholdCreateView.as_view(), name='create-household'),
     path('household/household-list/', HouseholdListView.as_view(), name='household-list'),
